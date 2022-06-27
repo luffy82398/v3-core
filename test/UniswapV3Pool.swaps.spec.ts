@@ -541,23 +541,23 @@ describe('UniswapV3Pool swap tests', () => {
             pool.feeGrowthGlobal0X128(),
             pool.feeGrowthGlobal1X128(),
           ])
-          const poolBalance0Delta = poolBalance0After.sub(poolBalance0) // pool token 存量变化量
-          const poolBalance1Delta = poolBalance1After.sub(poolBalance1) // pool token 存量变化量
+          const poolBalance0Delta = poolBalance0After.sub(poolBalance0) // pool token0 存量变化量
+          const poolBalance1Delta = poolBalance1After.sub(poolBalance1) // pool token1 存量变化量
 
           // check all the events were emitted corresponding to balance changes
           if (poolBalance0Delta.eq(0)) await expect(tx).to.not.emit(token0, 'Transfer')
-          else if (poolBalance0Delta.lt(0)) // less then 0, poolBalance0Delta < 0
+          else if (poolBalance0Delta.lt(0)) // less then 0, pool token0 存量变化量 < 0
             await expect(tx)
               .to.emit(token0, 'Transfer')
               .withArgs(pool.address, SWAP_RECIPIENT_ADDRESS, poolBalance0Delta.mul(-1))
-          else await expect(tx).to.emit(token0, 'Transfer').withArgs(wallet.address, pool.address, poolBalance0Delta) // poolBalance0Delta > 0
+          else await expect(tx).to.emit(token0, 'Transfer').withArgs(wallet.address, pool.address, poolBalance0Delta) // pool token0 存量变化量 > 0
 
-          if (poolBalance1Delta.eq(0)) await expect(tx).to.not.emit(token1, 'Transfer')
-          else if (poolBalance1Delta.lt(0))
+          if (poolBalance1Delta.eq(0)) await expect(tx).to.not.emit(token1, 'Transfer') 
+          else if (poolBalance1Delta.lt(0)) // less then 0, pool token1 存量变化量 < 0
             await expect(tx)
               .to.emit(token1, 'Transfer')
               .withArgs(pool.address, SWAP_RECIPIENT_ADDRESS, poolBalance1Delta.mul(-1))
-          else await expect(tx).to.emit(token1, 'Transfer').withArgs(wallet.address, pool.address, poolBalance1Delta)
+          else await expect(tx).to.emit(token1, 'Transfer').withArgs(wallet.address, pool.address, poolBalance1Delta) //pool token1 存量变化量 > 0
 
           // check that the swap event was emitted too
           await expect(tx)
@@ -572,8 +572,9 @@ describe('UniswapV3Pool swap tests', () => {
               slot0After.tick
             )
 
-          const executionPrice = new Decimal(poolBalance1Delta.toString()).div(poolBalance0Delta.toString()).mul(-1)
-
+          const executionPrice = new Decimal(poolBalance1Delta.toString()).div(poolBalance0Delta.toString()).mul(-1) //两个变化量相除是什么意思？token 换过来会怎样?
+          console.log(executionPrice, new Decimal(poolBalance1Delta.toString()), poolBalance0Delta.toString());
+          console.log(executionPrice, executionPrice.toPrecision(5));
           expect({
             amount0Before: poolBalance0.toString(),
             amount1Before: poolBalance1.toString(),
@@ -585,8 +586,8 @@ describe('UniswapV3Pool swap tests', () => {
             poolPriceBefore: formatPrice(slot0.sqrtPriceX96),
             tickAfter: slot0After.tick,
             poolPriceAfter: formatPrice(slot0After.sqrtPriceX96),
-            executionPrice: executionPrice.toPrecision(5),
-          }).to.matchSnapshot('balances')
+            executionPrice: executionPrice.toPrecision(5), // 精确到小数点后 5 位数
+          }).to.matchSnapshot('balances') // 上面的信息与之对应 ?
         })
       }
     })
