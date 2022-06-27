@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UniswapV3Pool swap tests low fee, 1:1 price, 2e18 max range liquidity swap exactly 1.0000 token0 for token1 1`] = `
+Object {
+  "amount0Before": "2000000000000000000",
+  "amount0Delta": "1000000000000000000",
+  "amount1Before": "2000000000000000000",
+  "amount1Delta": "-666444407401233536",
+  "executionPrice": "0.66644",
+  "feeGrowthGlobal0X128Delta": "85070591730234956148210572796405514",
+  "feeGrowthGlobal1X128Delta": "0",
+  "poolPriceAfter": "0.44459",
+  "poolPriceBefore": "1.0000",
+  "tickAfter": -8107,
+  "tickBefore": 0,
+}
+`;
