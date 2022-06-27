@@ -513,7 +513,7 @@ describe('UniswapV3Pool swap tests', () => {
       for (const testCase of poolCase.swapTests ?? DEFAULT_POOL_SWAP_TESTS) {
         it(swapCaseToDescription(testCase), async () => {
           const slot0 = await pool.slot0()
-          const tx = executeSwap(pool, testCase, poolFunctions)
+          const tx = executeSwap(pool, testCase, poolFunctions) // 执行 swap
           try {
             await tx
           } catch (error) {
@@ -541,16 +541,16 @@ describe('UniswapV3Pool swap tests', () => {
             pool.feeGrowthGlobal0X128(),
             pool.feeGrowthGlobal1X128(),
           ])
-          const poolBalance0Delta = poolBalance0After.sub(poolBalance0)
-          const poolBalance1Delta = poolBalance1After.sub(poolBalance1)
+          const poolBalance0Delta = poolBalance0After.sub(poolBalance0) // pool token 存量变化量
+          const poolBalance1Delta = poolBalance1After.sub(poolBalance1) // pool token 存量变化量
 
           // check all the events were emitted corresponding to balance changes
           if (poolBalance0Delta.eq(0)) await expect(tx).to.not.emit(token0, 'Transfer')
-          else if (poolBalance0Delta.lt(0))
+          else if (poolBalance0Delta.lt(0)) // less then 0, poolBalance0Delta < 0
             await expect(tx)
               .to.emit(token0, 'Transfer')
               .withArgs(pool.address, SWAP_RECIPIENT_ADDRESS, poolBalance0Delta.mul(-1))
-          else await expect(tx).to.emit(token0, 'Transfer').withArgs(wallet.address, pool.address, poolBalance0Delta)
+          else await expect(tx).to.emit(token0, 'Transfer').withArgs(wallet.address, pool.address, poolBalance0Delta) // poolBalance0Delta > 0
 
           if (poolBalance1Delta.eq(0)) await expect(tx).to.not.emit(token1, 'Transfer')
           else if (poolBalance1Delta.lt(0))
