@@ -71,6 +71,7 @@ type SwapTestCase =
   | SwapToHigherPrice
   | SwapToLowerPrice
 
+  /* 配合循环写出所有 Description */
 function swapCaseToDescription(testCase: SwapTestCase): string {
   const priceClause = testCase?.sqrtPriceLimit ? ` to price ${formatPrice(testCase.sqrtPriceLimit)}` : ''
   if ('exactOut' in testCase) {
@@ -99,8 +100,10 @@ function swapCaseToDescription(testCase: SwapTestCase): string {
 type PoolFunctions = ReturnType<typeof createPoolFunctions>
 
 // can't use address zero because the ERC20 token does not allow it
-const SWAP_RECIPIENT_ADDRESS = constants.AddressZero.slice(0, -1) + '1'
-const POSITION_PROCEEDS_OUTPUT_ADDRESS = constants.AddressZero.slice(0, -1) + '2'
+const SWAP_RECIPIENT_ADDRESS = constants.AddressZero.slice(0, -1) + '1' // '0x0000000000000000000000000000000000000001'
+const POSITION_PROCEEDS_OUTPUT_ADDRESS = constants.AddressZero.slice(0, -1) + '2' // '0x0000000000000000000000000000000000000002'
+
+
 
 async function executeSwap(
   pool: MockTimeUniswapV3Pool,
