@@ -469,14 +469,15 @@ describe('UniswapV3Pool swap tests', () => {
           [wallet],
           waffle.provider
         )
-        const pool = await createPool(poolCase.feeAmount, poolCase.tickSpacing)
+        const pool = await createPool(poolCase.feeAmount, poolCase.tickSpacing) // pool 合约
         const poolFunctions = createPoolFunctions({ swapTarget, token0, token1, pool })
         await pool.initialize(poolCase.startingPrice)
         // mint all positions
         for (const position of poolCase.positions) {
-          await poolFunctions.mint(wallet.address, position.tickLower, position.tickUpper, position.liquidity)
+          await poolFunctions.mint(wallet.address, position.tickLower, position.tickUpper, position.liquidity) // 应该是添加 liquidity, 查查看
         }
 
+        /* pool 存量 */
         const [poolBalance0, poolBalance1] = await Promise.all([
           token0.balanceOf(pool.address),
           token1.balanceOf(pool.address),
@@ -496,6 +497,7 @@ describe('UniswapV3Pool swap tests', () => {
       let poolFunctions: PoolFunctions
 
       beforeEach('load fixture', async () => {
+        /* 先加载 3 个合约, pool 参数, swapTarget */
         ;({ token0, token1, pool, poolFunctions, poolBalance0, poolBalance1, swapTarget } = await loadFixture(
           poolCaseFixture
         ))
