@@ -448,12 +448,12 @@ const TEST_POOLS: PoolTestCase[] = [
 ]
 
 describe('UniswapV3Pool swap tests', () => {
-  let wallet: Wallet, other: Wallet
+  let wallet: Wallet, other: Wallet // 签名者
 
   let loadFixture: ReturnType<typeof createFixtureLoader>
 
   before('create fixture loader', async () => {
-    ;[wallet, other] = await (ethers as any).getSigners()
+    ;[wallet, other] = await (ethers as any).getSigners() // 获取签名
 
     loadFixture = createFixtureLoader([wallet])
   })
