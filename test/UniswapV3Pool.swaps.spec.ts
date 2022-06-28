@@ -458,8 +458,7 @@ describe('UniswapV3Pool swap tests', () => {
   before('create fixture loader', async () => {
     ;[wallet, other] = await (ethers as any).getSigners() // 获取签名
 
-    loadFixture = createFixtureLoader([wallet]) // 这是什么 ？
-    // console.log(loadFixture);
+    loadFixture = createFixtureLoader([wallet]) // 这是什么 ？ // 加载 pool 合约的第一步
   })
 
   for (const poolCase of TEST_POOLS) {
