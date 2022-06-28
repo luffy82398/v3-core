@@ -104,6 +104,10 @@ export interface PoolFunctions {
   flash: FlashFunction
   mint: MintFunction
 }
+
+
+
+
 export function createPoolFunctions({
   swapTarget,
   token0,
@@ -220,6 +224,9 @@ export function createPoolFunctions({
     flash,
   }
 }
+
+
+
 
 export interface MultiPoolFunctions {
   swapForExact0Multi: SwapFunction

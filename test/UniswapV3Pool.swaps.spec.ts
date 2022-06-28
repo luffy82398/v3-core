@@ -71,7 +71,7 @@ type SwapTestCase =
   | SwapToHigherPrice
   | SwapToLowerPrice
 
-  /* 配合循环写出所有 Description */
+/* 配合循环写出所有 Description */
 function swapCaseToDescription(testCase: SwapTestCase): string {
   const priceClause = testCase?.sqrtPriceLimit ? ` to price ${formatPrice(testCase.sqrtPriceLimit)}` : ''
   if ('exactOut' in testCase) {
@@ -458,7 +458,7 @@ describe('UniswapV3Pool swap tests', () => {
   before('create fixture loader', async () => {
     ;[wallet, other] = await (ethers as any).getSigners() // 获取签名
 
-    loadFixture = createFixtureLoader([wallet]) // 这是什么 ？ // 加载 pool 合约的第一步
+    loadFixture = createFixtureLoader([wallet]) // 加载 pool 合约的第一步，夹杂了一些加载参数功能，弱智逻辑
   })
 
   for (const poolCase of TEST_POOLS) {
@@ -468,12 +468,12 @@ describe('UniswapV3Pool swap tests', () => {
           [wallet],
           waffle.provider
         )
-        const pool = await createPool(poolCase.feeAmount, poolCase.tickSpacing) // pool 合约
-        const poolFunctions = createPoolFunctions({ swapTarget, token0, token1, pool })
+        const pool = await createPool(poolCase.feeAmount, poolCase.tickSpacing) // 调用 createPool 函数才会得到 pool 合约，弱智做法
+        const poolFunctions = createPoolFunctions({ swapTarget, token0, token1, pool }) // 这 4 个都是合约
         await pool.initialize(poolCase.startingPrice)
         // mint all positions
         for (const position of poolCase.positions) {
-          await poolFunctions.mint(wallet.address, position.tickLower, position.tickUpper, position.liquidity) // 应该是添加 liquidity, 查查看
+          await poolFunctions.mint(wallet.address, position.tickLower, position.tickUpper, position.liquidity) // 添加 liquidity ？
         }
 
         /* pool 存量 */
@@ -496,10 +496,19 @@ describe('UniswapV3Pool swap tests', () => {
       let poolFunctions: PoolFunctions
 
       beforeEach('load fixture', async () => {
-        /* 先加载 3 个合约, pool 参数, swapTarget */
-        ;({ token0, token1, pool, poolFunctions, poolBalance0, poolBalance1, swapTarget } = await loadFixture(
+        /* 先加载 4 个合约, pool 存量, poolFunctions */
+        /*poolFunctions: swapToLowerPrice,
+          swapToHigherPrice,
+          swapExact0For1,
+          swap0ForExact1,
+          swapExact1For0,
+          swap1ForExact0,
+          mint,
+          flash */
+        ; ({ token0, token1, pool, poolFunctions, poolBalance0, poolBalance1, swapTarget } = await loadFixture(
           poolCaseFixture
         ))
+        console.log('poolFunctions: ', poolFunctions);
       })
 
       afterEach('check can burn positions', async () => {
@@ -551,7 +560,7 @@ describe('UniswapV3Pool swap tests', () => {
               .withArgs(pool.address, SWAP_RECIPIENT_ADDRESS, poolBalance0Delta.mul(-1))
           else await expect(tx).to.emit(token0, 'Transfer').withArgs(wallet.address, pool.address, poolBalance0Delta) // pool token0 存量变化量 > 0
 
-          if (poolBalance1Delta.eq(0)) await expect(tx).to.not.emit(token1, 'Transfer') 
+          if (poolBalance1Delta.eq(0)) await expect(tx).to.not.emit(token1, 'Transfer')
           else if (poolBalance1Delta.lt(0)) // less then 0, pool token1 存量变化量 < 0
             await expect(tx)
               .to.emit(token1, 'Transfer')
