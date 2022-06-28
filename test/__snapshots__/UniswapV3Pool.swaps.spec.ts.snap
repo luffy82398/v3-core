@@ -89,3 +89,29 @@ Object {
   "tickBefore": 0,
 }
 `;
+
+exports[`UniswapV3Pool swap tests medium fee, 1:1 price, 2e18 max range liquidity swap exactly 1.0000 token0 for token1 to price 0.50000 1`] = `
+Object {
+  "amount0Before": "2000000000000000000",
+  "amount0Delta": "830919884399388263",
+  "amount1Before": "2000000000000000000",
+  "amount1Delta": "-585786437626904951",
+  "executionPrice": "0.70499",
+  "feeGrowthGlobal0X128Delta": "424121077477644648929101317621422688",
+  "feeGrowthGlobal1X128Delta": "0",
+  "poolPriceAfter": "0.50000",
+  "poolPriceBefore": "1.0000",
+  "tickAfter": -6932,
+  "tickBefore": 0,
+}
+`;
+
+exports[`UniswapV3Pool swap tests medium fee, 1:1 price, 2e18 max range liquidity swap exactly 1.0000 token0 for token1 to price 2.0000 1`] = `
+Object {
+  "poolBalance0": "2000000000000000000",
+  "poolBalance1": "2000000000000000000",
+  "poolPriceBefore": "1.0000",
+  "swapError": "VM Exception while processing transaction: revert SPL",
+  "tickBefore": 0,
+}
+`;

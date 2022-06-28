@@ -247,6 +247,7 @@ interface PoolTestCase {
   swapTests?: SwapTestCase[]
 }
 
+
 const TEST_POOLS: PoolTestCase[] = [
   {
     description: 'low fee, 1:1 price, 2e18 max range liquidity',
@@ -472,7 +473,7 @@ describe('UniswapV3Pool swap tests', () => {
   before('create fixture loader', async () => {
     ;[wallet, other] = await (ethers as any).getSigners() // 获取签名
 
-    loadFixture = createFixtureLoader([wallet]) // 加载 pool 合约的第一步，夹杂了一些加载参数功能，弱智逻辑
+    loadFixture = createFixtureLoader([wallet]) // 加载 pool 合约的第一步，夹杂了一些加载参数功能
   })
 
   for (const poolCase of TEST_POOLS) {
@@ -482,7 +483,7 @@ describe('UniswapV3Pool swap tests', () => {
           [wallet],
           waffle.provider
         )
-        const pool = await createPool(poolCase.feeAmount, poolCase.tickSpacing) // 调用 createPool 函数才会得到 pool 合约，弱智做法
+        const pool = await createPool(poolCase.feeAmount, poolCase.tickSpacing) // 调用 createPool 函数才会得到 pool 合约
         const poolFunctions = createPoolFunctions({ swapTarget, token0, token1, pool }) // 这 4 个都是合约
         await pool.initialize(poolCase.startingPrice)
         // mint all positions
@@ -531,25 +532,17 @@ describe('UniswapV3Pool swap tests', () => {
         }
       })
       
-      /* 这是一个 poolCase:
-      {
-        description: 'low fee, 1:1 price, 2e18 max range liquidity',
-        feeAmount: FeeAmount.LOW,
-        tickSpacing: TICK_SPACINGS[FeeAmount.LOW],
-        startingPrice: encodePriceSqrt(1, 1),
-        positions: [
-          {
-            tickLower: getMinTick(TICK_SPACINGS[FeeAmount.LOW]),
-            tickUpper: getMaxTick(TICK_SPACINGS[FeeAmount.LOW]),
-            liquidity: expandTo18Decimals(2),
-          },
-        ],
-      }
-      */
+
+
+
+      // console.log(TEST_POOLS[0]); // 这是一个 poolCase
+      // console.log((TEST_POOLS[0]).description);
+      // console.log((TEST_POOLS[0]).swapTests); // 为什么是 undefined ?
+
+      // console.log(DEFAULT_POOL_SWAP_TESTS[0]); // 这是一个testCase in DEFAULT_POOL_SWAP_TESTS
+      // console.log(swapCaseToDescription(DEFAULT_POOL_SWAP_TESTS[0])); // 结果为 swap exactly 1.0000 token0 for token1
       for (const testCase of poolCase.swapTests ?? DEFAULT_POOL_SWAP_TESTS) {
-        it(swapCaseToDescription(testCase), async () => {
-          // console.log('swapCaseToDescription(testCase): ', swapCaseToDescription(testCase));
-          // testCase: 5 种 swap 方式, 
+        it(swapCaseToDescription(testCase)/* 如 swapCaseToDescription(DEFAULT_POOL_SWAP_TESTS[0]) */, async () => { 
           const slot0 = await pool.slot0()
           const tx = executeSwap(pool, testCase, poolFunctions) // 执行 swap
           try {
