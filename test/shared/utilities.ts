@@ -63,10 +63,10 @@ bn.config({ EXPONENTIAL_AT: 999999, DECIMAL_PLACES: 40 })
 export function encodePriceSqrt(reserve1: BigNumberish, reserve0: BigNumberish): BigNumber {
   return BigNumber.from(
     new bn(reserve1.toString())
-      .div(reserve0.toString())
-      .sqrt()
-      .multipliedBy(new bn(2).pow(96))
-      .integerValue(3)
+      .div(reserve0.toString()) // 除以
+      .sqrt() // 前面的开根号
+      .multipliedBy(new bn(2).pow(96)) // 乘上 2 的 96 次方
+      .integerValue(3) // 未知 , 但与数学运算无关
       .toString()
   )
 }

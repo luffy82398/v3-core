@@ -135,39 +135,47 @@ async function executeSwap(
   return swap
 }
 
+
 const DEFAULT_POOL_SWAP_TESTS: SwapTestCase[] = [
   // swap large amounts in/out
-  {
+  // { // swap exactly 1.0000 token0 for token1
+  //   zeroForOne: true, // true 表示 token0 换成 token1, false 表示 token1 换成 token0
+  //   exactOut: false, // true 表示已知出 pool 的量让服务器自行算进 pool 的量, false 表示已知进 pool 的量让服务器自行算出 pool 的量
+  //   amount0: expandTo18Decimals(1), // 已知zeroForOne 和 exactOut 的 bool 值, 如本例 zeroForOne: true&&exactOut: false, 可以推出是已知进 pool token 是token0, 这里需要设置其数量
+  // },
+  // { // swap exactly 1.0000 token1 for token0 // 
+  //   zeroForOne: false,
+  //   exactOut: false,
+  //   amount1: expandTo18Decimals(1),
+  // },
+  // { // swap token0 for exactly 1.0000 token1 // 
+  //   zeroForOne: true,
+  //   exactOut: true,
+  //   amount1: expandTo18Decimals(1),
+  // },
+  // { // swap token1 for exactly 1.0000 token0 // 
+  //   zeroForOne: false,
+  //   exactOut: true,
+  //   amount0: expandTo18Decimals(1),
+  // },
+
+  // swap large amounts in/out with a price limit
+  { // wap exactly 1.0000 token0 for token1 to price 0.50000
     zeroForOne: true,
     exactOut: false,
     amount0: expandTo18Decimals(1),
+    sqrtPriceLimit: encodePriceSqrt(50/* reserve1 */, 100/* reserve0 */),
+  },
+  { // wap exactly 1.0000 token0 for token1 to price 0.50000
+    zeroForOne: true,
+    exactOut: false,
+    amount0: expandTo18Decimals(1),
+    sqrtPriceLimit: encodePriceSqrt(100/* reserve1 */, 50/* reserve0 */),
   },
   // {
   //   zeroForOne: false,
   //   exactOut: false,
   //   amount1: expandTo18Decimals(1),
-  // },
-  // {
-  //   zeroForOne: true,
-  //   exactOut: true,
-  //   amount1: expandTo18Decimals(1),
-  // },
-  // {
-  //   zeroForOne: false,
-  //   exactOut: true,
-  //   amount0: expandTo18Decimals(1),
-  // },
-  // // swap large amounts in/out with a price limit
-  // {
-  //   zeroForOne: true,
-  //   exactOut: false,
-  //   amount0: expandTo18Decimals(1),
-  //   sqrtPriceLimit: encodePriceSqrt(50, 100),
-  // },
-  // {
-  //   zeroForOne: false,
-  //   exactOut: false,
-  //   amount1: expandTo18Decimals(1),
   //   sqrtPriceLimit: encodePriceSqrt(200, 100),
   // },
   // {
@@ -182,6 +190,7 @@ const DEFAULT_POOL_SWAP_TESTS: SwapTestCase[] = [
   //   amount0: expandTo18Decimals(1),
   //   sqrtPriceLimit: encodePriceSqrt(200, 100),
   // },
+
   // // swap small amounts in/out
   // {
   //   zeroForOne: true,
@@ -203,6 +212,7 @@ const DEFAULT_POOL_SWAP_TESTS: SwapTestCase[] = [
   //   exactOut: true,
   //   amount0: 1000,
   // },
+
   // // swap arbitrary input to price
   // {
   //   sqrtPriceLimit: encodePriceSqrt(5, 2),
@@ -450,7 +460,11 @@ const TEST_POOLS: PoolTestCase[] = [
   // },
 ]
 
+
+
 describe('UniswapV3Pool swap tests', () => {
+
+
   let wallet: Wallet, other: Wallet // 签名者
 
   let loadFixture: ReturnType<typeof createFixtureLoader>
@@ -508,7 +522,6 @@ describe('UniswapV3Pool swap tests', () => {
         ; ({ token0, token1, pool, poolFunctions, poolBalance0, poolBalance1, swapTarget } = await loadFixture(
           poolCaseFixture
         ))
-        console.log('poolFunctions: ', poolFunctions);
       })
 
       afterEach('check can burn positions', async () => {
@@ -517,9 +530,26 @@ describe('UniswapV3Pool swap tests', () => {
           await pool.collect(POSITION_PROCEEDS_OUTPUT_ADDRESS, tickLower, tickUpper, MaxUint128, MaxUint128)
         }
       })
-
+      
+      /* 这是一个 poolCase:
+      {
+        description: 'low fee, 1:1 price, 2e18 max range liquidity',
+        feeAmount: FeeAmount.LOW,
+        tickSpacing: TICK_SPACINGS[FeeAmount.LOW],
+        startingPrice: encodePriceSqrt(1, 1),
+        positions: [
+          {
+            tickLower: getMinTick(TICK_SPACINGS[FeeAmount.LOW]),
+            tickUpper: getMaxTick(TICK_SPACINGS[FeeAmount.LOW]),
+            liquidity: expandTo18Decimals(2),
+          },
+        ],
+      }
+      */
       for (const testCase of poolCase.swapTests ?? DEFAULT_POOL_SWAP_TESTS) {
         it(swapCaseToDescription(testCase), async () => {
+          // console.log('swapCaseToDescription(testCase): ', swapCaseToDescription(testCase));
+          // testCase: 5 种 swap 方式, 
           const slot0 = await pool.slot0()
           const tx = executeSwap(pool, testCase, poolFunctions) // 执行 swap
           try {

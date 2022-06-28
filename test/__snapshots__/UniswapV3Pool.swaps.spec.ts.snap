@@ -15,3 +15,77 @@ Object {
   "tickBefore": 0,
 }
 `;
+
+exports[`UniswapV3Pool swap tests low fee, 1:1 price, 2e18 max range liquidity swap exactly 1.0000 token0 for token1 to price 0.50000 1`] = `
+Object {
+  "amount0Before": "2000000000000000000",
+  "amount0Delta": "828841545518949575",
+  "amount1Before": "2000000000000000000",
+  "amount1Delta": "-585786437626904950",
+  "executionPrice": "0.70675",
+  "feeGrowthGlobal0X128Delta": "70510040727899606087499539976421836",
+  "feeGrowthGlobal1X128Delta": "0",
+  "poolPriceAfter": "0.50000",
+  "poolPriceBefore": "1.0000",
+  "tickAfter": -6932,
+  "tickBefore": 0,
+}
+`;
+
+exports[`UniswapV3Pool swap tests low fee, 1:1 price, 2e18 max range liquidity swap exactly 1.0000 token0 for token1 to price 2.0000 1`] = `
+Object {
+  "poolBalance0": "2000000000000000000",
+  "poolBalance1": "2000000000000000000",
+  "poolPriceBefore": "1.0000",
+  "swapError": "VM Exception while processing transaction: revert SPL",
+  "tickBefore": 0,
+}
+`;
+
+exports[`UniswapV3Pool swap tests low fee, 1:1 price, 2e18 max range liquidity swap exactly 1.0000 token1 for token0 1`] = `
+Object {
+  "amount0Before": "2000000000000000000",
+  "amount0Delta": "-666444407401233536",
+  "amount1Before": "2000000000000000000",
+  "amount1Delta": "1000000000000000000",
+  "executionPrice": "1.5005",
+  "feeGrowthGlobal0X128Delta": "0",
+  "feeGrowthGlobal1X128Delta": "85070591730234956148210572796405515",
+  "poolPriceAfter": "2.2493",
+  "poolPriceBefore": "1.0000",
+  "tickAfter": 8106,
+  "tickBefore": 0,
+}
+`;
+
+exports[`UniswapV3Pool swap tests low fee, 1:1 price, 2e18 max range liquidity swap token0 for exactly 1.0000 token1 1`] = `
+Object {
+  "amount0Before": "2000000000000000000",
+  "amount0Delta": "2001000500250125077",
+  "amount1Before": "2000000000000000000",
+  "amount1Delta": "-1000000000000000000",
+  "executionPrice": "0.49975",
+  "feeGrowthGlobal0X128Delta": "170226296608774038574344664756091446",
+  "feeGrowthGlobal1X128Delta": "0",
+  "poolPriceAfter": "0.25000",
+  "poolPriceBefore": "1.0000",
+  "tickAfter": -13864,
+  "tickBefore": 0,
+}
+`;
+
+exports[`UniswapV3Pool swap tests low fee, 1:1 price, 2e18 max range liquidity swap token1 for exactly 1.0000 token0 1`] = `
+Object {
+  "amount0Before": "2000000000000000000",
+  "amount0Delta": "-1000000000000000000",
+  "amount1Before": "2000000000000000000",
+  "amount1Delta": "2001000500250125079",
+  "executionPrice": "2.0010",
+  "feeGrowthGlobal0X128Delta": "0",
+  "feeGrowthGlobal1X128Delta": "170226296608774378856711585694554910",
+  "poolPriceAfter": "4.0000",
+  "poolPriceBefore": "1.0000",
+  "tickAfter": 13863,
+  "tickBefore": 0,
+}
+`;
