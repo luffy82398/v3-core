@@ -573,8 +573,8 @@ describe('UniswapV3Pool swap tests', () => {
             )
 
           const executionPrice = new Decimal(poolBalance1Delta.toString()).div(poolBalance0Delta.toString()).mul(-1) //两个变化量相除是什么意思？token 换过来会怎样?
-          console.log(executionPrice, new Decimal(poolBalance1Delta.toString()), poolBalance0Delta.toString());
-          console.log(executionPrice, executionPrice.toPrecision(5));
+          // console.log(executionPrice, new Decimal(poolBalance1Delta.toString()), poolBalance0Delta.toString());
+          // console.log((poolBalance1Delta).div(poolBalance0Delta.toString()).mul(-1)); // 这样会输出 BigNumber
           expect({
             amount0Before: poolBalance0.toString(),
             amount1Before: poolBalance1.toString(),
@@ -587,7 +587,8 @@ describe('UniswapV3Pool swap tests', () => {
             tickAfter: slot0After.tick,
             poolPriceAfter: formatPrice(slot0After.sqrtPriceX96),
             executionPrice: executionPrice.toPrecision(5), // 精确到小数点后 5 位数
-          }).to.matchSnapshot('balances') // 上面的信息与之对应 ?
+          }).to.matchSnapshot('balances') // 上面的信息与'balances'对应, 'balances' 在哪 ?
+          // console.log(executionPrice, executionPrice.toPrecision(5));
         })
       }
     })
