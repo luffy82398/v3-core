@@ -100,8 +100,8 @@ function swapCaseToDescription(testCase: SwapTestCase): string {
 type PoolFunctions = ReturnType<typeof createPoolFunctions>
 
 // can't use address zero because the ERC20 token does not allow it
-const SWAP_RECIPIENT_ADDRESS = constants.AddressZero.slice(0, -1) + '1' // '0x0000000000000000000000000000000000000001'
-const POSITION_PROCEEDS_OUTPUT_ADDRESS = constants.AddressZero.slice(0, -1) + '2' // '0x0000000000000000000000000000000000000002'
+const SWAP_RECIPIENT_ADDRESS = constants.AddressZero.slice(0, -1) + '1' // '0x0000000000000000000000000000000000000001' // swap 过程 token 接收者, 见 584 行
+const POSITION_PROCEEDS_OUTPUT_ADDRESS = constants.AddressZero.slice(0, -1) + '2' // '0x0000000000000000000000000000000000000002' // output token ?
 
 
 
@@ -166,12 +166,12 @@ const DEFAULT_POOL_SWAP_TESTS: SwapTestCase[] = [
     amount0: expandTo18Decimals(1),
     sqrtPriceLimit: encodePriceSqrt(50/* reserve1 */, 100/* reserve0 */),
   },
-  { // wap exactly 1.0000 token0 for token1 to price 0.50000
-    zeroForOne: true,
-    exactOut: false,
-    amount0: expandTo18Decimals(1),
-    sqrtPriceLimit: encodePriceSqrt(100/* reserve1 */, 50/* reserve0 */),
-  },
+  // { // wap exactly 1.0000 token0 for token1 to price 0.50000
+  //   zeroForOne: true,
+  //   exactOut: false,
+  //   amount0: expandTo18Decimals(1),
+  //   sqrtPriceLimit: encodePriceSqrt(100/* reserve1 */, 50/* reserve0 */),
+  // },
   // {
   //   zeroForOne: false,
   //   exactOut: false,
@@ -539,11 +539,12 @@ describe('UniswapV3Pool swap tests', () => {
       // console.log((TEST_POOLS[0]).description);
       // console.log((TEST_POOLS[0]).swapTests); // 为什么是 undefined ?
 
-      // console.log(DEFAULT_POOL_SWAP_TESTS[0]); // 这是一个testCase in DEFAULT_POOL_SWAP_TESTS
+      // console.log(DEFAULT_POOL_SWAP_TESTS[0]); // 这是一个 testCase in DEFAULT_POOL_SWAP_TESTS
       // console.log(swapCaseToDescription(DEFAULT_POOL_SWAP_TESTS[0])); // 结果为 swap exactly 1.0000 token0 for token1
       for (const testCase of poolCase.swapTests ?? DEFAULT_POOL_SWAP_TESTS) {
         it(swapCaseToDescription(testCase)/* 如 swapCaseToDescription(DEFAULT_POOL_SWAP_TESTS[0]) */, async () => { 
           const slot0 = await pool.slot0()
+          // console.log(slot0); 是什么 ?
           const tx = executeSwap(pool, testCase, poolFunctions) // 执行 swap
           try {
             await tx
@@ -569,7 +570,7 @@ describe('UniswapV3Pool swap tests', () => {
             token1.balanceOf(pool.address),
             pool.slot0(),
             pool.liquidity(),
-            pool.feeGrowthGlobal0X128(),
+            pool.feeGrowthGlobal0X128(), // fee 会随着流动性变化
             pool.feeGrowthGlobal1X128(),
           ])
           const poolBalance0Delta = poolBalance0After.sub(poolBalance0) // pool token0 存量变化量
@@ -595,13 +596,16 @@ describe('UniswapV3Pool swap tests', () => {
             .to.emit(pool, 'Swap')
             .withArgs(
               swapTarget.address,
-              SWAP_RECIPIENT_ADDRESS,
-              poolBalance0Delta,
-              poolBalance1Delta,
+              SWAP_RECIPIENT_ADDRESS, // swap 过程 token 接收者
+              poolBalance0Delta, // pool token0 存量变化量
+              poolBalance1Delta, // pool token1 存量变化量
               slot0After.sqrtPriceX96,
               liquidityAfter,
               slot0After.tick
             )
+            
+            // console.log('-------------------\n', slot0After, '\n');
+            // console.log('-------------------\n', slot0After.sqrtPriceX96.toString(), '\n'); // 这东西和函数encodePriceSqrt()算出来结果是一样的
 
           const executionPrice = new Decimal(poolBalance1Delta.toString()).div(poolBalance0Delta.toString()).mul(-1) //两个变化量相除是什么意思？token 换过来会怎样?
           // console.log(executionPrice, new Decimal(poolBalance1Delta.toString()), poolBalance0Delta.toString());
