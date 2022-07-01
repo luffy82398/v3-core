@@ -164,7 +164,7 @@ const DEFAULT_POOL_SWAP_TESTS: SwapTestCase[] = [
     zeroForOne: true,
     exactOut: false,
     amount0: expandTo18Decimals(1),
-    sqrtPriceLimit: encodePriceSqrt(50/* reserve1 */, 100/* reserve0 */),
+    sqrtPriceLimit: encodePriceSqrt(50/* reserve1 */, 100/* reserve0 */), // swap 者设定价格区间, 合约会算出其根号, 用于下一步计算
   },
   // { // wap exactly 1.0000 token0 for token1 to price 0.50000
   //   zeroForOne: true,
@@ -544,16 +544,16 @@ describe('UniswapV3Pool swap tests', () => {
       for (const testCase of poolCase.swapTests ?? DEFAULT_POOL_SWAP_TESTS) {
         it(swapCaseToDescription(testCase)/* 如 swapCaseToDescription(DEFAULT_POOL_SWAP_TESTS[0]) */, async () => { 
           const slot0 = await pool.slot0()
-          // console.log(slot0); 是什么 ?
+          // console.log(slot0); 
           const tx = executeSwap(pool, testCase, poolFunctions) // 执行 swap
           try {
-            await tx
+            await tx // 等待执行完成
           } catch (error) {
             expect({
               swapError: error.message,
               poolBalance0: poolBalance0.toString(),
               poolBalance1: poolBalance1.toString(),
-              poolPriceBefore: formatPrice(slot0.sqrtPriceX96),
+              poolPriceBefore: formatPrice(slot0.sqrtPriceX96),  // 价格
               tickBefore: slot0.tick,
             }).to.matchSnapshot('swap error')
             return
@@ -571,7 +571,7 @@ describe('UniswapV3Pool swap tests', () => {
             pool.slot0(),
             pool.liquidity(),
             pool.feeGrowthGlobal0X128(), // fee 会随着流动性变化
-            pool.feeGrowthGlobal1X128(),
+            pool.feeGrowthGlobal1X128(), // fee 会随着流动性变化
           ])
           const poolBalance0Delta = poolBalance0After.sub(poolBalance0) // pool token0 存量变化量
           const poolBalance1Delta = poolBalance1After.sub(poolBalance1) // pool token1 存量变化量
@@ -607,7 +607,7 @@ describe('UniswapV3Pool swap tests', () => {
             // console.log('-------------------\n', slot0After, '\n');
             // console.log('-------------------\n', slot0After.sqrtPriceX96.toString(), '\n'); // 这东西和函数encodePriceSqrt()算出来结果是一样的
 
-          const executionPrice = new Decimal(poolBalance1Delta.toString()).div(poolBalance0Delta.toString()).mul(-1) //两个变化量相除是什么意思？token 换过来会怎样?
+          const executionPrice = new Decimal(poolBalance1Delta.toString()).div(poolBalance0Delta.toString()).mul(-1) // 执行价格就是两个变化量相除
           // console.log(executionPrice, new Decimal(poolBalance1Delta.toString()), poolBalance0Delta.toString());
           // console.log((poolBalance1Delta).div(poolBalance0Delta.toString()).mul(-1)); // 这样会输出 BigNumber
           expect({
