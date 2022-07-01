@@ -18,7 +18,7 @@ describe('FullMath', () => {
     fullMath = (await factory.deploy()) as FullMathTest
   })
 
-  describe('#mulDiv', () => {
+  describe('#mulDiv', () => { // a×b÷denominator
     it('reverts if denominator is 0', async () => {
       await expect(fullMath.mulDiv(Q128, 5, 0)).to.be.reverted
     })
