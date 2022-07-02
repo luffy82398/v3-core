@@ -1,3 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`UniswapV3Factory #createPool gas 1`] = `4557092`;
+exports[`UniswapV3Factory #createPool gas a1 1`] = `4557092`;
+
+exports[`UniswapV3Factory #createPool gas a2 1`] = `4557092`;

@@ -76,10 +76,11 @@ describe('UniswapV3Factory', () => {
       .to.emit(factory, 'PoolCreated')
       .withArgs(TEST_ADDRESSES[0], TEST_ADDRESSES[1], feeAmount, tickSpacing, create2Address) // 可以在 log 中查看已经创建的 pool
 
-    await factory.createPool(tokens[0], tokens[1], feeAmount) // 为何再创建同样的 pool 会被拒绝
+    // await factory.createPool(tokens[0], tokens[1], feeAmount) // 为何再创建同样的 pool 会被拒绝 ?
 
     await expect(factory.createPool(tokens[0], tokens[1], feeAmount)).to.be.reverted // 再创建同样的 pool 会被拒绝
     await expect(factory.createPool(tokens[1], tokens[0], feeAmount)).to.be.reverted // 再创建同样的 pool 会被拒绝
+    console.log(create2Address);
     expect(await factory.getPool(tokens[0], tokens[1], feeAmount), 'getPool in order').to.eq(create2Address) 
     // 已经创建好的 pool 可以被获取到
     expect(await factory.getPool(tokens[1], tokens[0], feeAmount), 'getPool in reverse').to.eq(create2Address)
@@ -105,9 +106,9 @@ describe('UniswapV3Factory', () => {
     //   await createAndCheckPool(TEST_ADDRESSES, FeeAmount.HIGH)
     // })
 
-    it('succeeds if tokens are passed in reverse', async () => {
-      await createAndCheckPool([TEST_ADDRESSES[1], TEST_ADDRESSES[0]], FeeAmount.MEDIUM)
-    })
+    // it('succeeds if tokens are passed in reverse', async () => {
+    //   await createAndCheckPool([TEST_ADDRESSES[1], TEST_ADDRESSES[0]], FeeAmount.MEDIUM) // 调换 token 顺序也一样
+    // })
 
     // it('fails if token a == token b', async () => {
     //   await expect(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[0], FeeAmount.LOW)).to.be.reverted
@@ -122,12 +123,16 @@ describe('UniswapV3Factory', () => {
     // })
 
     // it('fails if fee amount is not enabled', async () => {
-    //   await expect(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], 250)).to.be.reverted
+    //   await expect(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], 250)).to.be.reverted // 只有 3 档 fee
     // })
 
-    // it('gas', async () => {
-    //   await snapshotGasCost(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], FeeAmount.MEDIUM))
-    // })
+    it('gas a1', async () => {
+      await snapshotGasCost(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], FeeAmount.MEDIUM))
+    })
+
+    it('gas a2', async () => {
+      await snapshotGasCost(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], FeeAmount.HIGH))
+    })
   })
 
   // describe('#setOwner', () => {
