@@ -90,23 +90,23 @@ describe('UniswapV3Pool', () => {
 
     // default to the 30 bips pool
     ;[pool0, pool0Functions] = await createPoolWrapped(feeAmount, tickSpacing, token0, token1)
-    ;[pool1, pool1Functions] = await createPoolWrapped(feeAmount, tickSpacing, token1, token2)
+    ;[pool1, pool1Functions] = await createPoolWrapped(feeAmount, tickSpacing, token1, token2) // 先创建 2 个 pool 用于测试
   })
 
-  it('constructor initializes immutables', async () => {
-    console.log('factory.address : ', factory.address);
-    console.log('await pool0.factory() : ', await pool0.factory()); // 往上一层找创建 pool 的 factory
-    console.log('await pool1.factory() : ', await pool1.factory()); // 往上一层找创建 pool 的 factory
-    console.log('token0.address : ', token0.address);
-    console.log('token1.address : ', token1.address);
-    console.log('token2.address : ', token2.address);
-    expect(await pool0.factory()).to.eq(factory.address)
-    expect(await pool0.token0()).to.eq(token0.address)
-    expect(await pool0.token1()).to.eq(token1.address)
-    expect(await pool1.factory()).to.eq(factory.address)
-    expect(await pool1.token0()).to.eq(token1.address)
-    expect(await pool1.token1()).to.eq(token2.address)
-  })
+  // it('constructor initializes immutables', async () => {
+  //   console.log('factory.address : ', factory.address);
+  //   console.log('await pool0.factory() : ', await pool0.factory()); // 往上一层找创建 pool 的 factory
+  //   console.log('await pool1.factory() : ', await pool1.factory()); // 往上一层找创建 pool 的 factory
+  //   console.log('token0.address : ', token0.address);
+  //   console.log('token1.address : ', token1.address);
+  //   console.log('token2.address : ', token2.address);
+  //   expect(await pool0.factory()).to.eq(factory.address)
+  //   expect(await pool0.token0()).to.eq(token0.address)
+  //   expect(await pool0.token1()).to.eq(token1.address)
+  //   expect(await pool1.factory()).to.eq(factory.address)
+  //   expect(await pool1.token0()).to.eq(token1.address)
+  //   expect(await pool1.token1()).to.eq(token2.address)
+  // })
 
   describe('multi-swaps', () => {
     let inputToken: TestERC20
@@ -116,6 +116,7 @@ describe('UniswapV3Pool', () => {
       inputToken = token0
       outputToken = token2
 
+      console.log(encodePriceSqrt(1, 1).toString());
       await pool0.initialize(encodePriceSqrt(1, 1))
       await pool1.initialize(encodePriceSqrt(1, 1))
 

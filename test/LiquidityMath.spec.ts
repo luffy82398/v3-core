@@ -17,7 +17,7 @@ describe('LiquidityMath', () => {
 
   describe('#addDelta', () => {
     it('1 + 0', async () => {
-      expect(await liquidityMath.addDelta(1, 0)).to.eq(1)
+      expect(await liquidityMath.addDelta(1/* 前 L */, 0/* 后 L */)).to.eq(1/* 算得 Delta L */)
     })
     it('1 + -1', async () => {
       expect(await liquidityMath.addDelta(1, -1)).to.eq(0)
