@@ -85,11 +85,11 @@ describe('UniswapV3Factory', () => {
 
     const poolContractFactory = await ethers.getContractFactory('UniswapV3Pool') // UniswapV3Pool 一类的 contract 
     const pool = poolContractFactory.attach(create2Address) // 加载 contract 的第二种方式: attach
-    expect(await pool.factory(), 'pool factory address').to.eq(factory.address)
-    expect(await pool.token0(), 'pool token0').to.eq(TEST_ADDRESSES[0])
-    expect(await pool.token1(), 'pool token1').to.eq(TEST_ADDRESSES[1])
-    expect(await pool.fee(), 'pool fee').to.eq(feeAmount)
-    expect(await pool.tickSpacing(), 'pool tick spacing').to.eq(tickSpacing)
+    expect(await pool.factory(), 'pool factory address').to.eq(factory.address) // 往上一层, 获取是通过哪个 factory 创建的本 pool
+    expect(await pool.token0(), 'pool token0').to.eq(TEST_ADDRESSES[0]) // 获取 pool 的 token 对
+    expect(await pool.token1(), 'pool token1').to.eq(TEST_ADDRESSES[1]) // 获取 pool 的 token 对
+    expect(await pool.fee(), 'pool fee').to.eq(feeAmount) // 获取 pool 的 fee
+    expect(await pool.tickSpacing(), 'pool tick spacing').to.eq(tickSpacing) // 获取 pool 的 tickSpacing
   }
 
   describe('#createPool', () => {
