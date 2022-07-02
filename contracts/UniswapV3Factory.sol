@@ -42,7 +42,7 @@ contract UniswapV3Factory is IUniswapV3Factory, UniswapV3PoolDeployer, NoDelegat
         require(token0 != address(0));
         int24 tickSpacing = feeAmountTickSpacing[fee];
         require(tickSpacing != 0);
-        require(getPool[token0][token1][fee] == address(0));  // 为何这里会要求是 0 地址 ? 是不是没有创建过的 pool 都是 0 地址
+        require(getPool[token0][token1][fee] == address(0));  // 没有创建过的 pool 都是都是默认值, 即 0 地址, 也就是创建过的都不能再创建
         pool = deploy(address(this), token0, token1, fee, tickSpacing); // 创建 pool
         getPool[token0][token1][fee] = pool; // 创建的 pool 用 mapping 记录下来
         // populate mapping in the reverse direction, deliberate choice to avoid the cost of comparing addresses
@@ -65,7 +65,7 @@ contract UniswapV3Factory is IUniswapV3Factory, UniswapV3PoolDeployer, NoDelegat
         // TickBitmap#nextInitializedTickWithinOneWord overflows int24 container from a valid tick
         // 16384 ticks represents a >5x price change with ticks of 1 bips
         require(tickSpacing > 0 && tickSpacing < 16384);
-        require(feeAmountTickSpacing[fee] == 0);
+        require(feeAmountTickSpacing[fee] == 0); // 除了 3 中挡位的 fee, 还没创建 feeAmountTickSpacing[fee] 都是默认值
 
         feeAmountTickSpacing[fee] = tickSpacing;
         emit FeeAmountEnabled(fee, tickSpacing);

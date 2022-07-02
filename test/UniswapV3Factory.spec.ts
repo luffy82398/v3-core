@@ -95,45 +95,42 @@ describe('UniswapV3Factory', () => {
     expect(await pool.tickSpacing(), 'pool tick spacing').to.eq(tickSpacing) // 获取 pool 的 tickSpacing
   }
 
-  describe('#createPool', () => {
-    // it('succeeds for low fee pool', async () => {
-    //   await createAndCheckPool(TEST_ADDRESSES, FeeAmount.LOW)
-    // })
-    // it('succeeds for medium fee pool', async () => {
-    //   await createAndCheckPool(TEST_ADDRESSES, FeeAmount.MEDIUM)
-    // })
-    // it('succeeds for high fee pool', async () => {
-    //   await createAndCheckPool(TEST_ADDRESSES, FeeAmount.HIGH)
-    // })
+  // describe('#createPool', () => {
+  //   it('succeeds for low fee pool', async () => {
+  //     await createAndCheckPool(TEST_ADDRESSES, FeeAmount.LOW)
+  //   })
+  //   it('succeeds for medium fee pool', async () => {
+  //     await createAndCheckPool(TEST_ADDRESSES, FeeAmount.MEDIUM)
+  //   })
+  //   it('succeeds for high fee pool', async () => {
+  //     await createAndCheckPool(TEST_ADDRESSES, FeeAmount.HIGH)
+  //   })
 
-    // it('succeeds if tokens are passed in reverse', async () => {
-    //   await createAndCheckPool([TEST_ADDRESSES[1], TEST_ADDRESSES[0]], FeeAmount.MEDIUM) // 调换 token 顺序也一样
-    // })
+  //   it('succeeds if tokens are passed in reverse', async () => {
+  //     await createAndCheckPool([TEST_ADDRESSES[1], TEST_ADDRESSES[0]], FeeAmount.MEDIUM) // 调换 token 顺序也一样
+  //   })
 
-    // it('fails if token a == token b', async () => {
-    //   await expect(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[0], FeeAmount.LOW)).to.be.reverted
-    // })
+  //   it('fails if token a == token b', async () => {
+  //     await expect(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[0], FeeAmount.LOW)).to.be.reverted
+  //   })
 
-    // it('fails if token a is 0 or token b is 0', async () => {
-    //   await expect(factory.createPool(TEST_ADDRESSES[0], constants.AddressZero, FeeAmount.LOW)).to.be.reverted
-    //   await expect(factory.createPool(constants.AddressZero, TEST_ADDRESSES[0], FeeAmount.LOW)).to.be.reverted
-    //   await expect(factory.createPool(constants.AddressZero, constants.AddressZero, FeeAmount.LOW)).to.be.revertedWith(
-    //     ''
-    //   )
-    // })
+  //   it('fails if token a is 0 or token b is 0', async () => {
+  //     await expect(factory.createPool(TEST_ADDRESSES[0], constants.AddressZero, FeeAmount.LOW)).to.be.reverted
+  //     await expect(factory.createPool(constants.AddressZero, TEST_ADDRESSES[0], FeeAmount.LOW)).to.be.reverted
+  //     await expect(factory.createPool(constants.AddressZero, constants.AddressZero, FeeAmount.LOW)).to.be.revertedWith(
+  //       ''
+  //     )
+  //   })
 
-    // it('fails if fee amount is not enabled', async () => {
-    //   await expect(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], 250)).to.be.reverted // 只有 3 档 fee
-    // })
+  //   it('fails if fee amount is not enabled', async () => {
+  //     await expect(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], 250)).to.be.reverted // 只有 3 档 fee
+  //   })
 
-    it('gas a1', async () => {
-      await snapshotGasCost(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], FeeAmount.MEDIUM))
-    })
+  //   it('gas', async () => {
+  //     await snapshotGasCost(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], FeeAmount.MEDIUM)) // 获取 gas 信息, 生成 snapshot
+  //   })
 
-    it('gas a2', async () => {
-      await snapshotGasCost(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], FeeAmount.HIGH))
-    })
-  })
+  // })
 
   // describe('#setOwner', () => {
   //   it('fails if caller is not owner', async () => {
@@ -141,7 +138,7 @@ describe('UniswapV3Factory', () => {
   //   })
 
   //   it('updates owner', async () => {
-  //     await factory.setOwner(other.address)
+  //     await factory.setOwner(other.address) // 所有者把 factory 的所有权给另一个人
   //     expect(await factory.owner()).to.eq(other.address)
   //   })
 
@@ -153,37 +150,37 @@ describe('UniswapV3Factory', () => {
 
   //   it('cannot be called by original owner', async () => {
   //     await factory.setOwner(other.address)
-  //     await expect(factory.setOwner(wallet.address)).to.be.reverted
+  //     await expect(factory.setOwner(wallet.address)).to.be.reverted // 所有权送人了, 就不能再重设所有权了
   //   })
   // })
 
-  // describe('#enableFeeAmount', () => {
-  //   it('fails if caller is not owner', async () => {
-  //     await expect(factory.connect(other).enableFeeAmount(100, 2)).to.be.reverted
-  //   })
-  //   it('fails if fee is too great', async () => {
-  //     await expect(factory.enableFeeAmount(1000000, 10)).to.be.reverted
-  //   })
-  //   it('fails if tick spacing is too small', async () => {
-  //     await expect(factory.enableFeeAmount(500, 0)).to.be.reverted
-  //   })
-  //   it('fails if tick spacing is too large', async () => {
-  //     await expect(factory.enableFeeAmount(500, 16834)).to.be.reverted
-  //   })
-  //   it('fails if already initialized', async () => {
-  //     await factory.enableFeeAmount(100, 5)
-  //     await expect(factory.enableFeeAmount(100, 10)).to.be.reverted
-  //   })
-  //   it('sets the fee amount in the mapping', async () => {
-  //     await factory.enableFeeAmount(100, 5)
-  //     expect(await factory.feeAmountTickSpacing(100)).to.eq(5)
-  //   })
-  //   it('emits an event', async () => {
-  //     await expect(factory.enableFeeAmount(100, 5)).to.emit(factory, 'FeeAmountEnabled').withArgs(100, 5)
-  //   })
-  //   it('enables pool creation', async () => {
-  //     await factory.enableFeeAmount(250, 15)
-  //     await createAndCheckPool([TEST_ADDRESSES[0], TEST_ADDRESSES[1]], 250, 15)
-  //   })
-  // })
+  describe('#enableFeeAmount', () => {
+    // it('fails if caller is not owner', async () => {
+    //   await expect(factory.connect(other).enableFeeAmount(100/* fee */, 2/* tick spacing */)).to.be.reverted
+    // })
+    it('fails if fee is too great', async () => {
+      await expect(factory.enableFeeAmount(1000000, 10)).to.be.reverted
+    })
+    it('fails if tick spacing is too small', async () => {
+      await expect(factory.enableFeeAmount(500, 0)).to.be.reverted
+    })
+    it('fails if tick spacing is too large', async () => {
+      await expect(factory.enableFeeAmount(500, 16834)).to.be.reverted
+    })
+    it('fails if already initialized', async () => {
+      await factory.enableFeeAmount(100, 5)
+      await expect(factory.enableFeeAmount(100, 10)).to.be.reverted
+    })
+    it('sets the fee amount in the mapping', async () => {
+      await factory.enableFeeAmount(100, 5)
+      expect(await factory.feeAmountTickSpacing(100)).to.eq(5)
+    })
+    it('emits an event', async () => {
+      await expect(factory.enableFeeAmount(100, 5)).to.emit(factory, 'FeeAmountEnabled').withArgs(100, 5)
+    })
+    it('enables pool creation', async () => {
+      await factory.enableFeeAmount(250, 15)
+      await createAndCheckPool([TEST_ADDRESSES[0], TEST_ADDRESSES[1]], 250, 15)
+    })
+  })
 })
