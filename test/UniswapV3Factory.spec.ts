@@ -72,14 +72,14 @@ describe('UniswapV3Factory', () => {
     const create2Address = getCreate2Address(factory.address, tokens, feeAmount, poolBytecode) // 即 poolAddress
     const create = factory.createPool(tokens[0], tokens[1], feeAmount) // 通过 factory 创建 pool
 
-    await expect(create)
+    await expect(create) // 等待创建 pool 成功
       .to.emit(factory, 'PoolCreated')
       .withArgs(TEST_ADDRESSES[0], TEST_ADDRESSES[1], feeAmount, tickSpacing, create2Address) // 可以在 log 中查看已经创建的 pool
 
     // await factory.createPool(tokens[0], tokens[1], feeAmount) // 为何再创建同样的 pool 会被拒绝 ?
 
     await expect(factory.createPool(tokens[0], tokens[1], feeAmount)).to.be.reverted // 再创建同样的 pool 会被拒绝
-    await expect(factory.createPool(tokens[1], tokens[0], feeAmount)).to.be.reverted // 再创建同样的 pool 会被拒绝
+    // await expect(factory.createPool(tokens[1], tokens[0], feeAmount)).to.be.reverted // 再创建同样的 pool 会被拒绝
     console.log(create2Address);
     expect(await factory.getPool(tokens[0], tokens[1], feeAmount), 'getPool in order').to.eq(create2Address) 
     // 已经创建好的 pool 可以被获取到
@@ -95,42 +95,42 @@ describe('UniswapV3Factory', () => {
     expect(await pool.tickSpacing(), 'pool tick spacing').to.eq(tickSpacing) // 获取 pool 的 tickSpacing
   }
 
-  // describe('#createPool', () => {
-  //   it('succeeds for low fee pool', async () => {
-  //     await createAndCheckPool(TEST_ADDRESSES, FeeAmount.LOW)
-  //   })
-  //   it('succeeds for medium fee pool', async () => {
-  //     await createAndCheckPool(TEST_ADDRESSES, FeeAmount.MEDIUM)
-  //   })
-  //   it('succeeds for high fee pool', async () => {
-  //     await createAndCheckPool(TEST_ADDRESSES, FeeAmount.HIGH)
-  //   })
+  describe('#createPool', () => {
+    it('succeeds for low fee pool', async () => {
+      await createAndCheckPool(TEST_ADDRESSES, FeeAmount.LOW)
+    })
+    // it('succeeds for medium fee pool', async () => {
+    //   await createAndCheckPool(TEST_ADDRESSES, FeeAmount.MEDIUM)
+    // })
+    // it('succeeds for high fee pool', async () => {
+    //   await createAndCheckPool(TEST_ADDRESSES, FeeAmount.HIGH)
+    // })
 
-  //   it('succeeds if tokens are passed in reverse', async () => {
-  //     await createAndCheckPool([TEST_ADDRESSES[1], TEST_ADDRESSES[0]], FeeAmount.MEDIUM) // 调换 token 顺序也一样
-  //   })
+    // it('succeeds if tokens are passed in reverse', async () => {
+    //   await createAndCheckPool([TEST_ADDRESSES[1], TEST_ADDRESSES[0]], FeeAmount.MEDIUM) // 调换 token 顺序也一样
+    // })
 
-  //   it('fails if token a == token b', async () => {
-  //     await expect(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[0], FeeAmount.LOW)).to.be.reverted
-  //   })
+    // it('fails if token a == token b', async () => {
+    //   await expect(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[0], FeeAmount.LOW)).to.be.reverted
+    // })
 
-  //   it('fails if token a is 0 or token b is 0', async () => {
-  //     await expect(factory.createPool(TEST_ADDRESSES[0], constants.AddressZero, FeeAmount.LOW)).to.be.reverted
-  //     await expect(factory.createPool(constants.AddressZero, TEST_ADDRESSES[0], FeeAmount.LOW)).to.be.reverted
-  //     await expect(factory.createPool(constants.AddressZero, constants.AddressZero, FeeAmount.LOW)).to.be.revertedWith(
-  //       ''
-  //     )
-  //   })
+    // it('fails if token a is 0 or token b is 0', async () => {
+    //   await expect(factory.createPool(TEST_ADDRESSES[0], constants.AddressZero, FeeAmount.LOW)).to.be.reverted
+    //   await expect(factory.createPool(constants.AddressZero, TEST_ADDRESSES[0], FeeAmount.LOW)).to.be.reverted
+    //   await expect(factory.createPool(constants.AddressZero, constants.AddressZero, FeeAmount.LOW)).to.be.revertedWith(
+    //     ''
+    //   )
+    // })
 
-  //   it('fails if fee amount is not enabled', async () => {
-  //     await expect(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], 250)).to.be.reverted // 只有 3 档 fee
-  //   })
+    // it('fails if fee amount is not enabled', async () => {
+    //   await expect(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], 250)).to.be.reverted // 只有 3 档 fee
+    // })
 
-  //   it('gas', async () => {
-  //     await snapshotGasCost(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], FeeAmount.MEDIUM)) // 获取 gas 信息, 生成 snapshot
-  //   })
+    // it('gas', async () => {
+    //   await snapshotGasCost(factory.createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1], FeeAmount.MEDIUM)) // 获取 gas 信息, 生成 snapshot
+    // })
 
-  // })
+  })
 
   // describe('#setOwner', () => {
   //   it('fails if caller is not owner', async () => {
@@ -154,33 +154,33 @@ describe('UniswapV3Factory', () => {
   //   })
   // })
 
-  describe('#enableFeeAmount', () => {
-    // it('fails if caller is not owner', async () => {
-    //   await expect(factory.connect(other).enableFeeAmount(100/* fee */, 2/* tick spacing */)).to.be.reverted
-    // })
-    it('fails if fee is too great', async () => {
-      await expect(factory.enableFeeAmount(1000000, 10)).to.be.reverted
-    })
-    it('fails if tick spacing is too small', async () => {
-      await expect(factory.enableFeeAmount(500, 0)).to.be.reverted
-    })
-    it('fails if tick spacing is too large', async () => {
-      await expect(factory.enableFeeAmount(500, 16834)).to.be.reverted
-    })
-    it('fails if already initialized', async () => {
-      await factory.enableFeeAmount(100, 5)
-      await expect(factory.enableFeeAmount(100, 10)).to.be.reverted
-    })
-    it('sets the fee amount in the mapping', async () => {
-      await factory.enableFeeAmount(100, 5)
-      expect(await factory.feeAmountTickSpacing(100)).to.eq(5)
-    })
-    it('emits an event', async () => {
-      await expect(factory.enableFeeAmount(100, 5)).to.emit(factory, 'FeeAmountEnabled').withArgs(100, 5)
-    })
-    it('enables pool creation', async () => {
-      await factory.enableFeeAmount(250, 15)
-      await createAndCheckPool([TEST_ADDRESSES[0], TEST_ADDRESSES[1]], 250, 15)
-    })
-  })
+  // describe('#enableFeeAmount', () => {
+  //   it('fails if caller is not owner', async () => {
+  //     await expect(factory.connect(other).enableFeeAmount(100/* fee */, 2/* tick spacing */)).to.be.reverted
+  //   })
+  //   it('fails if fee is too great', async () => {
+  //     await expect(factory.enableFeeAmount(1000000, 10)).to.be.reverted
+  //   })
+  //   it('fails if tick spacing is too small', async () => {
+  //     await expect(factory.enableFeeAmount(500, 0)).to.be.reverted
+  //   })
+  //   it('fails if tick spacing is too large', async () => {
+  //     await expect(factory.enableFeeAmount(500, 16834)).to.be.reverted
+  //   })
+  //   it('fails if already initialized', async () => {
+  //     await expect(factory.enableFeeAmount(500, 10)).to.be.reverted // 默认的最小费率挡位已有, 不能再设
+  //     await expect(factory.enableFeeAmount(500, 15)).to.be.reverted // 默认的最小费率挡位已有, 不能再设, 换 tick spacing 也不行
+  //   })
+  //   it('sets the fee amount in the mapping', async () => {
+  //     await factory.enableFeeAmount(100, 5) // 设个新的 fee
+  //     expect(await factory.feeAmountTickSpacing(100)).to.eq(5) // 查看此时 fee 对应的 tick spacing
+  //   })
+  //   it('emits an event', async () => {
+  //     await expect(factory.enableFeeAmount(100, 5)).to.emit(factory, 'FeeAmountEnabled').withArgs(100, 5)
+  //   })
+  //   it('enables pool creation', async () => {
+  //     await factory.enableFeeAmount(250, 15)
+  //     await createAndCheckPool([TEST_ADDRESSES[0], TEST_ADDRESSES[1]], 250, 15) // 可以用新设的 fee 创建 pool
+  //   })
+  // })
 })
