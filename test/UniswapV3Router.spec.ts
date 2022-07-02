@@ -77,6 +77,15 @@ describe('UniswapV3Pool', () => {
       minTick = getMinTick(spacing)
       maxTick = getMaxTick(spacing)
       return [pool, poolFunctions]
+      /*poolFunctions: 
+        swapToLowerPrice,
+        swapToHigherPrice,
+        swapExact0For1,
+        swap0ForExact1,
+        swapExact1For0,
+        swap1ForExact0,
+        mint,
+        flash */
     }
 
     // default to the 30 bips pool
@@ -85,6 +94,12 @@ describe('UniswapV3Pool', () => {
   })
 
   it('constructor initializes immutables', async () => {
+    console.log('factory.address : ', factory.address);
+    console.log('await pool0.factory() : ', await pool0.factory()); // 往上一层找创建 pool 的 factory
+    console.log('await pool1.factory() : ', await pool1.factory()); // 往上一层找创建 pool 的 factory
+    console.log('token0.address : ', token0.address);
+    console.log('token1.address : ', token1.address);
+    console.log('token2.address : ', token2.address);
     expect(await pool0.factory()).to.eq(factory.address)
     expect(await pool0.token0()).to.eq(token0.address)
     expect(await pool0.token1()).to.eq(token1.address)

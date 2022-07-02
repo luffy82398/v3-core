@@ -512,7 +512,8 @@ describe('UniswapV3Pool swap tests', () => {
 
       beforeEach('load fixture', async () => {
         /* 先加载 4 个合约, pool 存量, poolFunctions */
-        /*poolFunctions: swapToLowerPrice,
+        /*poolFunctions: 
+          swapToLowerPrice,
           swapToHigherPrice,
           swapExact0For1,
           swap0ForExact1,
