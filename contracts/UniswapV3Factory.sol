@@ -42,11 +42,11 @@ contract UniswapV3Factory is IUniswapV3Factory, UniswapV3PoolDeployer, NoDelegat
         require(token0 != address(0));
         int24 tickSpacing = feeAmountTickSpacing[fee];
         require(tickSpacing != 0);
-        require(getPool[token0][token1][fee] == address(0));  // 为何这里会要求是 0 地址 ?
-        pool = deploy(address(this), token0, token1, fee, tickSpacing);
-        getPool[token0][token1][fee] = pool;
+        require(getPool[token0][token1][fee] == address(0));  // 为何这里会要求是 0 地址 ? 是不是没有创建过的 pool 都是 0 地址
+        pool = deploy(address(this), token0, token1, fee, tickSpacing); // 创建 pool
+        getPool[token0][token1][fee] = pool; // 创建的 pool 用 mapping 记录下来
         // populate mapping in the reverse direction, deliberate choice to avoid the cost of comparing addresses
-        getPool[token1][token0][fee] = pool;
+        getPool[token1][token0][fee] = pool; // 创建的 pool 用 mapping 记录下来
         emit PoolCreated(token0, token1, fee, tickSpacing, pool);
     }
 
