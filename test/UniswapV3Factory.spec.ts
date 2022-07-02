@@ -70,16 +70,16 @@ describe('UniswapV3Factory', () => {
     tickSpacing: number = TICK_SPACINGS[feeAmount]
   ) {
     const create2Address = getCreate2Address(factory.address, tokens, feeAmount, poolBytecode) // 即 poolAddress
-    const create = factory.createPool(tokens[0], tokens[1], feeAmount) // 通过 factory 创建 pool
+    const create = factory.createPool(tokens[0], tokens[1], feeAmount)
+    // 通过 factory 创建 pool
+    // createPool 函数中有 deploy 函数, 而 deploy 函数中有 salt 参数, salt 和 poolBytecode 可以算得唯一 poolAddress
 
     await expect(create) // 等待创建 pool 成功
       .to.emit(factory, 'PoolCreated')
       .withArgs(TEST_ADDRESSES[0], TEST_ADDRESSES[1], feeAmount, tickSpacing, create2Address) // 可以在 log 中查看已经创建的 pool
 
-    // await factory.createPool(tokens[0], tokens[1], feeAmount) // 为何再创建同样的 pool 会被拒绝 ?
-
-    await expect(factory.createPool(tokens[0], tokens[1], feeAmount)).to.be.reverted // 再创建同样的 pool 会被拒绝
-    // await expect(factory.createPool(tokens[1], tokens[0], feeAmount)).to.be.reverted // 再创建同样的 pool 会被拒绝
+    await expect(factory.createPool(tokens[0], tokens[1], feeAmount)).to.be.reverted // 再创建相同地址的 pool 会被拒绝
+    await expect(factory.createPool(tokens[1], tokens[0], feeAmount)).to.be.reverted // 再创建相同地址的 pool 会被拒绝
     console.log(create2Address);
     expect(await factory.getPool(tokens[0], tokens[1], feeAmount), 'getPool in order').to.eq(create2Address) 
     // 已经创建好的 pool 可以被获取到

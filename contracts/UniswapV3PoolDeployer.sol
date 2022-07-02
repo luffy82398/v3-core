@@ -32,7 +32,7 @@ contract UniswapV3PoolDeployer is IUniswapV3PoolDeployer {
         int24 tickSpacing
     ) internal returns (address pool) {
         parameters = Parameters({factory: factory, token0: token0, token1: token1, fee: fee, tickSpacing: tickSpacing});
-        pool = address(new UniswapV3Pool{salt: keccak256(abi.encode(token0, token1, fee))}());
+        pool = address(new UniswapV3Pool{salt: keccak256(abi.encode(token0, token1, fee))}()); // salt 和 bytecode 不变, pool 地址不变而且链下可获得
         delete parameters;
     }
 }
