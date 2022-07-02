@@ -33,13 +33,13 @@ describe('SqrtPriceMath', () => {
     //   await expect(sqrtPriceMath.getNextSqrtPriceFromInput(price, liquidity, amountIn, false)).to.be.reverted
     // })
 
-    it('any input amount cannot underflow the price', async () => { // 任何输入金额都不能低于价格 ?
-      const price = 1
-      const liquidity = 1
-      const amountIn = BigNumber.from(2).pow(255)
-      console.log(amountIn.toString());
-      expect(await sqrtPriceMath.getNextSqrtPriceFromInput(price, liquidity, amountIn, true)).to.eq(1)
-    })
+    // it('any input amount cannot underflow the price', async () => { // 任何输入金额都不能低于价格 ?
+    //   const price = 1
+    //   const liquidity = 1
+    //   const amountIn = BigNumber.from(2).pow(255)
+    //   console.log(amountIn.toString());
+    //   expect(await sqrtPriceMath.getNextSqrtPriceFromInput(price, liquidity, amountIn, true)).to.eq(1)
+    // })
 
     // it('returns input price if amount in is zero and zeroForOne = true', async () => {
     //   const price = encodePriceSqrt(1, 1)
@@ -51,12 +51,12 @@ describe('SqrtPriceMath', () => {
     //   expect(await sqrtPriceMath.getNextSqrtPriceFromInput(price, expandTo18Decimals(1).div(10), 0, false)).to.eq(price)
     // })
 
-    // it('returns the minimum price for max inputs', async () => {
-    //   const sqrtP = BigNumber.from(2).pow(160).sub(1)
-    //   const liquidity = MaxUint128
-    //   const maxAmountNoOverflow = MaxUint256.sub(liquidity.shl(96).div(sqrtP))
-    //   expect(await sqrtPriceMath.getNextSqrtPriceFromInput(sqrtP, liquidity, maxAmountNoOverflow, true)).to.eq('1')
-    // })
+    it('returns the minimum price for max inputs', async () => {
+      const sqrtP = BigNumber.from(2).pow(160).sub(1)
+      const liquidity = MaxUint128
+      const maxAmountNoOverflow = MaxUint256.sub(liquidity.shl(96).div(sqrtP))
+      expect(await sqrtPriceMath.getNextSqrtPriceFromInput(sqrtP, liquidity, maxAmountNoOverflow, true)).to.eq('1')
+    })
 
     // it('input amount of 0.1 token1', async () => {
     //   const sqrtQ = await sqrtPriceMath.getNextSqrtPriceFromInput(
