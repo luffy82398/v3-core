@@ -33,7 +33,7 @@ describe('SqrtPriceMath', () => {
     //   await expect(sqrtPriceMath.getNextSqrtPriceFromInput(price, liquidity, amountIn, false)).to.be.reverted
     // })
 
-    it('any input amount cannot underflow the price', async () => { // ?
+    it('any input amount cannot underflow the price', async () => { // 任何输入金额都不能低于价格 ?
       const price = 1
       const liquidity = 1
       const amountIn = BigNumber.from(2).pow(255)
