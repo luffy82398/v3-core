@@ -41,7 +41,7 @@ describe('UniswapV3Factory', () => {
   })
 
   // it('owner is deployer', async () => {
-  //   expect(await factory.owner()).to.eq(wallet.address) // 本 factory 属于部署者。 除非要在别的链上也部署 uniswap , 不然这样部署一次就够了 ?
+  //   expect(await factory.owner()).to.eq(wallet.address) // 本 factory 属于部署者。 除非要在别的链上也部署 uniswap , 不然这样部署一次就够了
   // })
 
   // it('factory bytecode size', async () => {
@@ -51,14 +51,14 @@ describe('UniswapV3Factory', () => {
 
   // it('pool bytecode size', async () => { // 创建 pool contract
   //   await factory.createPool(TEST_ADDRESSES[0] /* tokenA */, TEST_ADDRESSES[1], FeeAmount.MEDIUM/* 费率设为 0.3% */)
-  //   // 通过 factory 创建 pool, 第一个用户创建后, 接下来的都不能创建同样的 pool, 只能添加 L ?
+  //   // 通过 factory 创建 pool, 第一个用户创建后, 后面的人如果创建同类的 pool (同 token 对, 同 fee) 时会算得同样的 poolAddress, 即不能再创建, 只能添加 L
   //   const poolAddress = getCreate2Address(factory.address, TEST_ADDRESSES, FeeAmount.MEDIUM, poolBytecode/* 符合 UniswapV3Pool.sol 类型的 */)
   //   // 这 4 个参数能确定唯一的 pool
   //   expect(((await waffle.provider.getCode(poolAddress)).length - 2) / 2).to.matchSnapshot()  // 获取 bytecode 长度
   // })
 
   // it('initial enabled fee amounts', async () => {
-  //   console.log(FeeAmount.LOW, await factory.feeAmountTickSpacing(FeeAmount.LOW)); // TickSpacing 是什么 ? 
+  //   console.log(FeeAmount.LOW, await factory.feeAmountTickSpacing(FeeAmount.LOW)); // Tick 是离散的, TickSpacing 是 Tick 的间隔
   //   // expect(await factory.feeAmountTickSpacing(FeeAmount.LOW)).to.eq(TICK_SPACINGS[FeeAmount.LOW])
   //   // expect(await factory.feeAmountTickSpacing(FeeAmount.MEDIUM)).to.eq(TICK_SPACINGS[FeeAmount.MEDIUM])
   //   // expect(await factory.feeAmountTickSpacing(FeeAmount.HIGH)).to.eq(TICK_SPACINGS[FeeAmount.HIGH])
