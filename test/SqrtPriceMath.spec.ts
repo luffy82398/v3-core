@@ -19,7 +19,7 @@ describe('SqrtPriceMath', () => {
 
   describe('#getNextSqrtPriceFromInput', () => { // return 一个出 pool 量
     // it('fails if price is zero', async () => {
-    //   await expect(sqrtPriceMath.getNextSqrtPriceFromInput(0/* 初始根号P */, 0/* 初始 L */, expandTo18Decimals(1).div(10)/* 进 pool 量 */, false/* token 是否为 0 换 1 */)).to.be.reverted
+    //   await expect(sqrtPriceMath.getNextSqrtPriceFromInput(0/* 初始根号 p */, 0/* 初始 L */, expandTo18Decimals(1).div(10)/* 进 pool 量 */, false/* token 是否为 0 换 1 */)).to.be.reverted
     // })
 
     // it('fails if liquidity is zero', async () => {
@@ -51,19 +51,22 @@ describe('SqrtPriceMath', () => {
     //   expect(await sqrtPriceMath.getNextSqrtPriceFromInput(price, expandTo18Decimals(1).div(10), 0, false)).to.eq(price)
     // })
 
-    it('returns the minimum price for max inputs', async () => {
-      const sqrtP = BigNumber.from(2).pow(160).sub(1)
-      const liquidity = MaxUint128
-      const maxAmountNoOverflow = MaxUint256.sub(liquidity.shl(96).div(sqrtP))
-      expect(await sqrtPriceMath.getNextSqrtPriceFromInput(sqrtP, liquidity, maxAmountNoOverflow, true)).to.eq('1')
-    })
-
+    // it('returns the minimum price for max inputs', async () => {
+    //   const sqrtP = BigNumber.from(2).pow(160).sub(1)
+    //   const liquidity = MaxUint128
+    //   const maxAmountNoOverflow = MaxUint256.sub(liquidity.shl(96).div(sqrtP))
+    //   console.log('sqrtP:', sqrtP.toString());
+    //   console.log('liquidity:', liquidity.toString());
+    //   console.log('maxAmountNoOverflow:', maxAmountNoOverflow.toString());
+    //   expect(await sqrtPriceMath.getNextSqrtPriceFromInput(sqrtP, liquidity, maxAmountNoOverflow, true)).to.eq('1')
+    // })
+    
     // it('input amount of 0.1 token1', async () => {
     //   const sqrtQ = await sqrtPriceMath.getNextSqrtPriceFromInput(
-    //     encodePriceSqrt(1, 1),
-    //     expandTo18Decimals(1),
-    //     expandTo18Decimals(1).div(10),
-    //     false
+    //     encodePriceSqrt(1, 1), /* 初始根号 p */
+    //     expandTo18Decimals(1), /* 初始 L */
+    //     expandTo18Decimals(1).div(10), /* 进 pool 量 */
+    //     false /* token 是否为 0 换 1 */
     //   )
     //   expect(sqrtQ).to.eq('87150978765690771352898345369')
     // })
@@ -78,18 +81,20 @@ describe('SqrtPriceMath', () => {
     //   expect(sqrtQ).to.eq('72025602285694852357767227579')
     // })
 
-    // it('amountIn > type(uint96).max and zeroForOne = true', async () => {
-    //   expect(
-    //     await sqrtPriceMath.getNextSqrtPriceFromInput(
-    //       encodePriceSqrt(1, 1),
-    //       expandTo18Decimals(10),
-    //       BigNumber.from(2).pow(100),
-    //       true
-    //     )
-    //     // perfect answer:
-    //     // https://www.wolframalpha.com/input/?i=624999999995069620+-+%28%281e19+*+1+%2F+%281e19+%2B+2%5E100+*+1%29%29+*+2%5E96%29
-    //   ).to.eq('624999999995069620')
-    // })
+    it('amountIn > type(uint96).max and zeroForOne = true', async () => {
+      console.log('encodePriceSqrt(1, 1) :', encodePriceSqrt(1, 1).toString());
+      console.log('expandTo18Decimals(10) :', expandTo18Decimals(10).toString());
+      expect(
+        await sqrtPriceMath.getNextSqrtPriceFromInput(
+          encodePriceSqrt(1, 1), // 初始根号 p 2**96
+          expandTo18Decimals(10), // 初始 L, 10 * (10**18)
+          BigNumber.from(2).pow(100), // 进 pool 量, 2**100
+          true
+        )
+        // perfect answer:
+        // https://www.wolframalpha.com/input/?i=624999999995069620+-+%28%281e19+*+1+%2F+%281e19+%2B+2%5E100+*+1%29%29+*+2%5E96%29
+      ).to.eq('624999999995069620')
+    })
 
     // it('can return 1 with enough amountIn and zeroForOne = true', async () => {
     //   expect(
