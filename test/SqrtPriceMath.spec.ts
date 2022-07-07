@@ -66,21 +66,21 @@ describe('SqrtPriceMath', () => {
     //   expect(await sqrtPriceMath.getNextSqrtPriceFromInput(sqrtP, liquidity, maxAmountNoOverflow, true)).to.eq('1')
     // })
     
-    it('input amount of 0.1 token1', async () => {
-      const sqrtQ = await sqrtPriceMath.getNextSqrtPriceFromInput(
-        encodePriceSqrt(1, 1), /* 初始根号 p */
-        expandTo18Decimals(1), /* 初始 L */
-        expandTo18Decimals(1).div(10), /* 进 pool 量 */
-        false /* token 是否为 0 换 1 */
-      )
-      expect(sqrtQ).to.eq('87150978765690771352898345369')
-    })
+    // it('input amount of 0.1 token1', async () => {
+    //   const sqrtQ = await sqrtPriceMath.getNextSqrtPriceFromInput(
+    //     encodePriceSqrt(1, 1), /* 初始根号 p */
+    //     expandTo18Decimals(1), /* 初始 L */
+    //     expandTo18Decimals(1).div(10), /* 进 pool 量 */
+    //     false /* token 是否为 0 换 1 */
+    //   )
+    //   expect(sqrtQ).to.eq('87150978765690771352898345369')
+    // })
 
     it('input amount of 0.1 token0', async () => { // 见 mathematica 
       const sqrtQ = await sqrtPriceMath.getNextSqrtPriceFromInput(
-        encodePriceSqrt(1, 1),
-        expandTo18Decimals(1),
-        expandTo18Decimals(1).div(10),
+        encodePriceSqrt(1, 1), // 2**96
+        expandTo18Decimals(1), // 10**18
+        expandTo18Decimals(1).div(10), // 10**17
         true
       )
       expect(sqrtQ).to.eq('72025602285694852357767227579')
